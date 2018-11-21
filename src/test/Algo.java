@@ -2,10 +2,11 @@ package test;
 
 import java.util.ArrayList;
 
-public class Test {
+public class Algo {
+	
 	private int it;
 	private int xn=0;
-	private int QmaxTurb=32;
+	private int QmaxTurb=160;
 	
 	private double HauteurChuteNette1;
 	private double HauteurChuteNette2;
@@ -22,21 +23,71 @@ public class Test {
 	private double p03;
 	
 	private double Puissancecalcule;
-	private double Puissance=0;
+	private double Puissance = 0;
+	private double ElevAm = 172.11;
+	private double ElevAv = 139.009;
+	
+	private double Qtot;
+	private double Qmax1;
+	private double Qmax2;
+	private double Qmax3;
+	private double Qmax4;
+	private double Qmax5;
+	
+	
+	//Constructor1
+	public Algo() {}
 
+	// Constructor2
+	public Algo(double ElevAm, double Qtot, double Qmax1, double Qmax2, 
+			    double Qmax3, double Qmax4, double Qmax5) {
+		
+		this.ElevAv = ElevAm;
+		this.Qmax1 = Qmax1;
+		this.Qmax2 = Qmax2;
+		this.Qmax3 = Qmax3;
+		this.Qmax4 = Qmax4;
+		this.Qmax5 = Qmax5;
+		this.Qtot = Qtot;
+	}
+	
+	public void setElevAm(double ElevAm) {
+		this.ElevAv = ElevAm;
+	}
+	
+	public void setQtot(double Qtot) {
+		this.Qtot = Qtot;
+	}
+	
+	public void setDebitsMax(double Qmax1, double Qmax2, 
+			    double Qmax3, double Qmax4, double Qmax5) {
+		this.Qmax1 = Qmax1;
+		this.Qmax2 = Qmax2;
+		this.Qmax3 = Qmax3;
+		this.Qmax4 = Qmax4;
+		this.Qmax5 = Qmax5;
+	}
+	
+	/* Calcul élévation avale en fonction de 
+	 * l'élévation amont en entrée (=> constructeur) */
+	public void calculElevAv() {
+		;
+	}
+	
+	
 	public ArrayList<Double> tableau5() {
-		xn=0;
-		p00 =-665.4;
-		p10 =1.773;
-		p01 =62.27;
-		p11 =-0.113;
-		p02 =-1.924;
-		p12 =0.002065;
-		p03 =0.01963;
+		xn = 0;
+		p00 = -665.4;
+		p10 = 1.773;
+		p01 = 62.27;
+		p11 = -0.113;
+		p02 = -1.924;
+		p12 = 0.002065;
+		p03 = 0.01963;
 		
 		ArrayList<Double> tableau5=new ArrayList<Double>();
-		for(it=0;it<=QmaxTurb;it++) {
-			HauteurChuteNette5=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
+		for(it=0;it<=QmaxTurb;it+=5) {
+			HauteurChuteNette5= ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(it, 2);
 			Puissance= p00 + p10*it + p01*HauteurChuteNette5 + p11*it*HauteurChuteNette5 + p02*Math.pow(HauteurChuteNette5,2) + p12*it*Math.pow(HauteurChuteNette5,2) + p03*Math.pow(HauteurChuteNette5,3);
 			
 			tableau5.add(Puissance);
@@ -60,9 +111,9 @@ public class Test {
 		
 		ArrayList<Double> tableau4= new ArrayList<Double>();
 		for(int j=0; j<=32;j++) {
-			for(it=0;it<=QmaxTurb;it++) {
+			for(it=0;it<=QmaxTurb;it+=5) {
 				if(j-it>=0) {
-					HauteurChuteNette4=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
+					HauteurChuteNette4 = ElevAm-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
 					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+tableau5().get(j-it);
 					//calcul de Fn*
@@ -92,7 +143,7 @@ public class Test {
 		
 		ArrayList<Double> tableau3= new ArrayList<Double>();
 		for(int j=0; j<=32;j++) {
-			for(it=0;it<=QmaxTurb;it++) {
+			for(it=0;it<=QmaxTurb;it+=5) {
 				if(j-it>=0) {
 					HauteurChuteNette3=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
@@ -123,7 +174,7 @@ public class Test {
 		
 		ArrayList<Double> tableau2= new ArrayList<Double>();
 		for(int j=0; j<=32;j++) {
-			for(it=0;it<=QmaxTurb;it++) {
+			for(it=0;it<=QmaxTurb;it+=5) {
 				if(j-it>=0) {
 					HauteurChuteNette2=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
@@ -153,7 +204,7 @@ public class Test {
 		p03 =0.02414;
 		
 		ArrayList<Double> tableau1=new ArrayList<Double>();
-		for(it=0;it<=QmaxTurb; it++) {
+		for(it=0;it<=QmaxTurb; it+=5) {
 			HauteurChuteNette1=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 			//gain maximale de la turbine suivante pour le it correspondant (max de chaque ligne du tableau d'apres:Puissance= constante*(160-it*5)+constante*HauteurChuteNette2
 
