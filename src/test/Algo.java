@@ -71,10 +71,14 @@ public class Algo {
 	/* Calcul élévation avale en fonction de 
 	 * l'élévation amont en entrée (=> constructeur) */
 	public void calculElevAv() {
-		double p1 = -7.378;
+		double p1 = -7.378 * Math.pow(10, -7);
 		double p2 = 0.004195;
 		double p3 = 137.1;
 		ElevAv = p1 * Math.pow(Qtot, 2) + p2 * Qtot + p3;
+	}
+	
+	public double getElevAv() {
+		return this.ElevAv;
 	}
 	
 	

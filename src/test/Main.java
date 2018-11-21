@@ -10,7 +10,8 @@ public class Main {
 		a.setElevAm(172.110000610351);
 		a.setQtot(548.958435058593);
 		a.setDebitsMax(160, 160, 160, 160, 160);
-		
+		a.calculElevAv();
+		System.out.println("Elevation aval : "+a.getElevAv());
 		
 		
 	}
