@@ -1,7 +1,12 @@
+package test;
+
 import java.util.ArrayList;
 
 public class Test {
 	private int it;
+	private int xn=0;
+	private int QmaxTurb=32;
+	
 	private double HauteurChuteNette1;
 	private double HauteurChuteNette2;
 	private double HauteurChuteNette3;
@@ -17,11 +22,10 @@ public class Test {
 	private double p03;
 	
 	private double Puissancecalcule;
-	private double Puissance;
-	private double constante1=1;
-	private double constante2=1;
-	public double tableau5(int i) {
-		
+	private double Puissance=0;
+
+	public ArrayList<Double> tableau5() {
+		xn=0;
 		p00 =-665.4;
 		p10 =1.773;
 		p01 =62.27;
@@ -31,19 +35,20 @@ public class Test {
 		p03 =0.01963;
 		
 		ArrayList<Double> tableau5=new ArrayList<Double>();
-		for(it=0;it<=32;it++) {
+		for(it=0;it<=QmaxTurb;it++) {
 			HauteurChuteNette5=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 			Puissance= p00 + p10*it + p01*HauteurChuteNette5 + p11*it*HauteurChuteNette5 + p02*Math.pow(HauteurChuteNette5,2) + p12*it*Math.pow(HauteurChuteNette5,2) + p03*Math.pow(HauteurChuteNette5,3);
 			
 			tableau5.add(Puissance);
 		}
 		
-		return tableau5.get(i);
+		return tableau5;
 	}
 	
 	
-	public double tableau4(int i){
-		Puissance=0;
+	public ArrayList<Double> tableau4(){
+		
+		xn=0;
 		
 		p00 =-436.5;
 		p10 =0.6018;
@@ -55,27 +60,28 @@ public class Test {
 		
 		ArrayList<Double> tableau4= new ArrayList<Double>();
 		for(int j=0; j<=32;j++) {
-			for(it=0;it<=32;it++) {
+			for(it=0;it<=QmaxTurb;it++) {
 				if(j-it>=0) {
 					HauteurChuteNette4=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
-					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3);
+					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+tableau5().get(j-it);
 					//calcul de Fn*
 					if(Puissancecalcule>=Puissance) {
 						Puissance=Puissancecalcule;
+						xn=it;
 					}
 					
 				}
 				
 			}
 			tableau4.add(Puissance);
+			
 		}
-		return tableau4.get(i);
+		return tableau4;
 	}
 	
-	public double tableau3(int i){
-		Puissance=0;
-		
+	public ArrayList<Double> tableau3(){	
+		xn=0;
 		p00 =-713.9;
 		p10 =1.331;
 		p01 =67.91;
@@ -86,14 +92,15 @@ public class Test {
 		
 		ArrayList<Double> tableau3= new ArrayList<Double>();
 		for(int j=0; j<=32;j++) {
-			for(it=0;it<=32;it++) {
+			for(it=0;it<=QmaxTurb;it++) {
 				if(j-it>=0) {
 					HauteurChuteNette3=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
-					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette3 + p11*it*HauteurChuteNette3 + p02*Math.pow(HauteurChuteNette3,2) + p12*it*Math.pow(HauteurChuteNette3,2) + p03*Math.pow(HauteurChuteNette3,3);
+					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette3 + p11*it*HauteurChuteNette3 + p02*Math.pow(HauteurChuteNette3,2) + p12*it*Math.pow(HauteurChuteNette3,2) + p03*Math.pow(HauteurChuteNette3,3)+tableau4().get(j-it);
 					//calcul de Fn*
 					if(Puissancecalcule>=Puissance) {
 						Puissance=Puissancecalcule;
+						xn=it;
 					}
 					
 				}
@@ -101,12 +108,11 @@ public class Test {
 			}
 			tableau3.add(Puissance);
 		}
-		return tableau3.get(i);
+		return tableau3;
 	}
 	
-	public double tableau2(int i){
-		Puissance=0;
-		
+	public ArrayList<Double> tableau2(){
+		xn=0;		
 		p00 =-463.8;
 		p10 =0.8633;
 		p01 =44.78;
@@ -117,14 +123,15 @@ public class Test {
 		
 		ArrayList<Double> tableau2= new ArrayList<Double>();
 		for(int j=0; j<=32;j++) {
-			for(it=0;it<=32;it++) {
+			for(it=0;it<=QmaxTurb;it++) {
 				if(j-it>=0) {
 					HauteurChuteNette2=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
-					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette2 + p11*it*HauteurChuteNette2 + p02*Math.pow(HauteurChuteNette2,2) + p12*it*Math.pow(HauteurChuteNette2,2) + p03*Math.pow(HauteurChuteNette2,3);
+					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette2 + p11*it*HauteurChuteNette2 + p02*Math.pow(HauteurChuteNette2,2) + p12*it*Math.pow(HauteurChuteNette2,2) + p03*Math.pow(HauteurChuteNette2,3)+tableau3().get(j-it);
 					//calcul de Fn*
 					if(Puissancecalcule>=Puissance) {
 						Puissance=Puissancecalcule;
+						xn=it;
 					}
 					
 				}
@@ -132,11 +139,11 @@ public class Test {
 			}
 			tableau2.add(Puissance);
 		}
-		return tableau2.get(i);
+		return tableau2;
 	}
 	
-	public double tableau1(int i){
-		
+	public ArrayList<Double> tableau1(){
+		xn=0;
 		p00 =-688.9;
 		p10 =0.8937;
 		p01 =67.96;
@@ -146,14 +153,20 @@ public class Test {
 		p03 =0.02414;
 		
 		ArrayList<Double> tableau1=new ArrayList<Double>();
-		for(it=0;it<=32; it++) {
+		for(it=0;it<=QmaxTurb; it++) {
 			HauteurChuteNette1=172.11-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 			//gain maximale de la turbine suivante pour le it correspondant (max de chaque ligne du tableau d'apres:Puissance= constante*(160-it*5)+constante*HauteurChuteNette2
 
-			Puissance= p00 + p10*it + p01*HauteurChuteNette1 + p11*it*HauteurChuteNette1 + p02*Math.pow(HauteurChuteNette1,2) + p12*it*Math.pow(HauteurChuteNette1,2) + p03*Math.pow(HauteurChuteNette1,3);
-			tableau1.add(Puissance);
+			Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette1 + p11*it*HauteurChuteNette1 + p02*Math.pow(HauteurChuteNette1,2) + p12*it*Math.pow(HauteurChuteNette1,2) + p03*Math.pow(HauteurChuteNette1,3)+tableau2().get(QmaxTurb-it);
+			
+			//calcul de Fn*
+			if(Puissancecalcule>=Puissance) {
+				Puissance=Puissancecalcule;
+				xn=it;
+			}
 		}
-		return tableau1.get(i);
+		tableau1.add(Puissance);
+		return tableau1;
 	}
 	
 	public double maxTab(ArrayList<Double> tab) {
