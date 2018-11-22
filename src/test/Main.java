@@ -14,6 +14,8 @@ public class Main {
 		System.out.println("Elevation aval : "+a.getElevAv());
 		a.calculTab5();
 		a.displyTab5();
+		a.calculTab4();
+		a.displyTab4();
 		
 	}
 }
