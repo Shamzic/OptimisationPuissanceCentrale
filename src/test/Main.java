@@ -11,11 +11,19 @@ public class Main {
 		a.setQtot(548.958435058593);
 		a.setDebitsMax(160, 160, 160, 160, 160);
 		a.calculElevAv();
-		System.out.println("Elevation aval : "+a.getElevAv());
+		// System.out.println("Elevation aval : "+a.getElevAv());
 		a.calculTab5();
 		a.displyTab5();
-		a.calculTab4();
-		a.displyTab4();
 		
+		a.calculTab4();
+		a.displayTab4();
+		
+		a.calculTab3();
+		a.displayTab3();
+		
+		a.calculTab2();
+		a.displayTab2();
+		
+		a.calculTab1();
 	}
 }

@@ -45,11 +45,20 @@ public class Algo {
 	private ArrayList<Double> tab2;
 	private ArrayList<Double> tab1;
 	
+	double best_xn5 = 0;
+	double best_xn4 = 0;
+	double best_xn3 = 0;
+	double best_xn2 = 0;
+	double best_xn1 = 0;
+	
 	
 	//Constructor1
 	public Algo() {
 		this.tab5 =new ArrayList<Double>();
 		this.tab4= new ArrayList<Double>();
+		this.tab3 =new ArrayList<Double>();
+		this.tab2= new ArrayList<Double>();
+		this.tab1 =new ArrayList<Double>();
 	}
 
 	// Constructor2
@@ -131,28 +140,58 @@ public class Algo {
 	}
 	
 	
-	public void calculTab4(){
-		
-		p00 =-436.5;
-		p10 =0.6018;
-		p01 =43.03;
-		p11 =-0.03336;
-		p02 =-1.406;
-		p12 =0.0007168;
-		p03 =0.01525;
+	public void calculTab4() {
+		this.p00 =-436.5;
+		this.p10 =0.6018;
+		this.p01 =43.03;
+		this.p11 =-0.03336;
+		this.p02 =-1.406;
+		this.p12 =0.0007168;
+		this.p03 =0.01525;
+		this.best_xn4 = 0;
+		this.calculTab(tab4, tab5, best_xn4);
+	}
+	
+	public void calculTab3() {
+		this.p00 =-713.9;
+		this.p10 =1.331;
+		this.p01 =67.91;
+		this.p11 =-0.08218;
+		this.p02 =-2.137;
+		this.p12 =0.001528;
+		this.p03 =0.02226;
+		this.best_xn3 = 0;
+		this.calculTab(tab3, tab4, best_xn3);
+	}
+	
+	public void calculTab2() {
+		p00 =-463.8;
+		p10 =0.8633;
+		p01 =44.78;
+		p11 =-0.05074;
+		p02 =-1.432;
+		p12 =0.001016;
+		p03 =0.01517;
+		this.best_xn2 = 0;
+		this.calculTab(tab2, tab3, best_xn3);
+	}
+	
+	
+	
+	public void calculTab(ArrayList<Double> tab, ArrayList<Double> tab_np1, double best_xn){
 		
 		double hcn;
 		double Gn;
 		double Fetoile_np1;
 		double Fn_sn_xn;
 		double Fetoile_n = 0;
-		double best_xn = 0;
+		
 		// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 		// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
 		for(int sn = 0; sn <= QmaxTurb; sn += 5) {
 			for(int xn = 0; xn <= QmaxTurb; xn += 5) {
 				if((sn - xn) >= 0) {
-					hcn = ElevAm - ElevAv-0.5*Math.pow(10, -5)*Math.pow(xn, 2);
+					hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
 
 					// vieux code : Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
 
@@ -163,7 +202,7 @@ public class Algo {
 					//System.out.println(" xn : "+xn);
 					
 					// Calcul de f* de n+1 (sn - xn)
-					Fetoile_np1 = tab5.get((sn/5) - (xn/5));
+					Fetoile_np1 = tab_np1.get((sn/5) - (xn/5));
 					
 					// Calcul de Fn(sn, xn)
 					Fn_sn_xn = Gn + Fetoile_np1; 
@@ -179,13 +218,26 @@ public class Algo {
 					}
 				}					
 			}
-			tab4.add(Fetoile_n);	
+			tab.add(Fetoile_n);	
 		}
 	}
 	
-	public void displyTab4(){
+	public void displayTab4(){
 		System.out.println("Tab4 : "+this.tab4);
 	}
+	
+	
+	public void displayTab3(){
+		System.out.println("Tab3 : "+this.tab3);
+	}
+	
+	public void displayTab2(){
+		System.out.println("Tab2 : "+this.tab2);
+	}
+	
+//	public void displyTab3(){
+//		System.out.println("Tab2 : "+this.tab2);
+//	}
 	
 //	public ArrayList<Double> tableau3(){	
 //		xn=0;
@@ -276,6 +328,61 @@ public class Algo {
 //		return tableau1;
 //	}
 	
+	
+public void calculTab1() {
+		
+	this.p00 =-688.9;
+	this.p10 =0.8937;
+	this.p01 =67.96;
+	this.p11 =-0.05336;
+	this.p02 =-2.223;
+	this.p12 =0.001051;
+	this.p03 =0.02414;
+
+	double hcn;
+	double Gn;
+	double Fetoile_np1;
+	double Fn_sn_xn;
+	double Fetoile_n = 0;
+	
+	// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
+	// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
+	int sn = QmaxTurb;
+		for(int xn = 0; xn <= QmaxTurb; xn += 5) {
+			if((sn - xn) >= 0) {
+				hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
+
+				// vieux code : Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
+
+				// Calcul du gain
+				Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
+				
+				//System.out.println(" sn : "+sn);
+				//System.out.println(" xn : "+xn);
+				
+				// Calcul de f* de n+1 (sn - xn)
+				Fetoile_np1 = tab2.get((sn/5) - (xn/5));
+				
+				// Calcul de Fn(sn, xn)
+				Fn_sn_xn = Gn + Fetoile_np1; 
+				System.out.println(" tab1 : fn => "+Fn_sn_xn);
+				
+				//calcul de Fn*(sn) : recherche du maximum des xn
+				if(xn == 0) {
+					Fetoile_n = Fn_sn_xn;
+				} else {
+					if(Fn_sn_xn>Fetoile_n) {
+						Fetoile_n = Fn_sn_xn;
+						best_xn1 = xn;
+					}
+				}
+			}					
+		}
+		tab1.add(Fetoile_n);
+		System.out.println("le f*n du tab1 est : "+Fetoile_n);
+		System.out.println("le meilleur xn du tab 1 est : "+best_xn1); // Attention à ne pas oublier de le *5 pour avoir les m^3 réels
+}
+	
 	public double maxTab(ArrayList<Double> tab) {
 		double maximum=0;
 		for(int i=0; i<=tab.size();i++){
@@ -284,6 +391,10 @@ public class Algo {
 			}
 		}
 		return maximum;
+		
+	}
+	
+	public void backward () {
 		
 	}
 
