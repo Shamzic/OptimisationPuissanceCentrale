@@ -27,16 +27,29 @@ public class Algo {
 	private double ElevAm = 172.11;
 	private double ElevAv = 139.009;
 	
+	// Débit total à turbiner
 	private double Qtot;
+	
+	// Débits max pour chaque turbine
 	private double Qmax1;
 	private double Qmax2;
 	private double Qmax3;
 	private double Qmax4;
 	private double Qmax5;
 	
+	// Tableau des débit max à turbiner pour chaque turbine
+	// Pour le tab5, on calcul directement la puissance max possible pour chaque débit
+	private ArrayList<Double> tab5;
+	private ArrayList<Double> tab4;
+	private ArrayList<Double> tab3;
+	private ArrayList<Double> tab2;
+	private ArrayList<Double> tab1;
+	
 	
 	//Constructor1
-	public Algo() {}
+	public Algo() {
+		this.tab5 =new ArrayList<Double>();
+	}
 
 	// Constructor2
 	public Algo(double ElevAm, double Qtot, double Qmax1, double Qmax2, 
@@ -49,6 +62,7 @@ public class Algo {
 		this.Qmax4 = Qmax4;
 		this.Qmax5 = Qmax5;
 		this.Qtot = Qtot;
+		this.tab5 =new ArrayList<Double>();
 	}
 	
 	public void setElevAm(double ElevAm) {
@@ -81,9 +95,12 @@ public class Algo {
 		return this.ElevAv;
 	}
 	
+	public void displyTab5(){
+		System.out.println("Tab5 : "+this.tab5);
+	}
 	
-	public ArrayList<Double> tableau5() {
-		xn = 0;
+	public void calculTab5() {
+		
 		p00 = -665.4;
 		p10 = 1.773;
 		p01 = 62.27;
@@ -91,16 +108,24 @@ public class Algo {
 		p02 = -1.924;
 		p12 = 0.002065;
 		p03 = 0.01963;
+
+		double Puissance = 0;
 		
-		ArrayList<Double> tableau5=new ArrayList<Double>();
-		for(it=0;it<=QmaxTurb;it+=5) {
-			HauteurChuteNette5= ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(it, 2);
-			Puissance= p00 + p10*it + p01*HauteurChuteNette5 + p11*it*HauteurChuteNette5 + p02*Math.pow(HauteurChuteNette5,2) + p12*it*Math.pow(HauteurChuteNette5,2) + p03*Math.pow(HauteurChuteNette5,3);
+		for(int d=0;d<=QmaxTurb;d+=5) {
 			
-			tableau5.add(Puissance);
+			double pertes_de_charge = 0.5*Math.pow(10, -5)*Math.pow(d, 2);
+			double hcn = ElevAm - ElevAv - pertes_de_charge;
+			
+			// f(x,y) = p00 + p10*x + p01*y + p11*x*y + p02*y^2 + p12*x*y^2 + p03*y^3
+			//  - en x on a le débit : d
+			//  - en y on a la hauteur de chute nette : hcn
+			
+			Puissance = p00 + p10*d + p01*hcn + p11*d*hcn +
+					p02*Math.pow(hcn, 2) + p12*d*Math.pow(hcn, 2) + 
+					p03*Math.pow(hcn, 3);
+			
+			this.tab5.add(Puissance);
 		}
-		
-		return tableau5;
 	}
 	
 	
@@ -122,7 +147,7 @@ public class Algo {
 				if(j-it>=0) {
 					HauteurChuteNette4 = ElevAm-139.009-0.5*Math.pow(10, -5)*Math.pow(it, 2);
 					//calcul de Fn
-					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+tableau5().get(j-it);
+					Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
 					//calcul de Fn*
 					if(Puissancecalcule>=Puissance) {
 						Puissance=Puissancecalcule;

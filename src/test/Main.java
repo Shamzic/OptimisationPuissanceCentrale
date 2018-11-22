@@ -12,7 +12,8 @@ public class Main {
 		a.setDebitsMax(160, 160, 160, 160, 160);
 		a.calculElevAv();
 		System.out.println("Elevation aval : "+a.getElevAv());
-		
+		a.calculTab5();
+		a.displyTab5();
 		
 	}
 }
