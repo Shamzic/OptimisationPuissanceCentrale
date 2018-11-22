@@ -45,10 +45,10 @@ public class Algo {
 	private ArrayList<Double> tab2;
 	private ArrayList<Double> tab1;
 	
-	double best_xn5 = 0;
-	double best_xn4 = 0;
-	double best_xn3 = 0;
-	double best_xn2 = 0;
+	ArrayList<Integer> best_xn5;
+	ArrayList<Integer> best_xn4;
+	ArrayList<Integer> best_xn3;
+	ArrayList<Integer> best_xn2;
 	double best_xn1 = 0;
 	
 	
@@ -59,6 +59,11 @@ public class Algo {
 		this.tab3 =new ArrayList<Double>();
 		this.tab2= new ArrayList<Double>();
 		this.tab1 =new ArrayList<Double>();
+		this.best_xn5 = new ArrayList<Integer>();
+		this.best_xn4 = new ArrayList<Integer>();
+		this.best_xn3 = new ArrayList<Integer>();
+		this.best_xn2 = new ArrayList<Integer>();
+	
 	}
 
 	// Constructor2
@@ -148,7 +153,7 @@ public class Algo {
 		this.p02 =-1.406;
 		this.p12 =0.0007168;
 		this.p03 =0.01525;
-		this.best_xn4 = 0;
+		this.best_xn4.clear();
 		this.calculTab(tab4, tab5, best_xn4);
 	}
 	
@@ -160,7 +165,7 @@ public class Algo {
 		this.p02 =-2.137;
 		this.p12 =0.001528;
 		this.p03 =0.02226;
-		this.best_xn3 = 0;
+		this.best_xn3.clear();
 		this.calculTab(tab3, tab4, best_xn3);
 	}
 	
@@ -172,13 +177,13 @@ public class Algo {
 		p02 =-1.432;
 		p12 =0.001016;
 		p03 =0.01517;
-		this.best_xn2 = 0;
+		this.best_xn2.clear();
 		this.calculTab(tab2, tab3, best_xn3);
 	}
 	
 	
 	
-	public void calculTab(ArrayList<Double> tab, ArrayList<Double> tab_np1, double best_xn){
+	public void calculTab(ArrayList<Double> tab, ArrayList<Double> tab_np1, ArrayList<Integer> best_xn){
 		
 		double hcn;
 		double Gn;
@@ -210,10 +215,11 @@ public class Algo {
 					//calcul de Fn*(sn) : recherche du maximum des xn
 					if(xn == 0) {
 						Fetoile_n = Fn_sn_xn;
+						best_xn.add(xn);
 					} else {
-						if(Fn_sn_xn>Fetoile_n) {
+						if(Fn_sn_xn > Fetoile_n) {
 							Fetoile_n = Fn_sn_xn;
-							best_xn = xn;
+							best_xn.set(sn/5, xn); // (indice, élément)
 						}
 					}
 				}					
@@ -365,7 +371,7 @@ public void calculTab1() {
 				
 				// Calcul de Fn(sn, xn)
 				Fn_sn_xn = Gn + Fetoile_np1; 
-				System.out.println(" tab1 : fn => "+Fn_sn_xn);
+				//System.out.println(" tab1 : fn => "+Fn_sn_xn);
 				
 				//calcul de Fn*(sn) : recherche du maximum des xn
 				if(xn == 0) {
@@ -373,14 +379,13 @@ public void calculTab1() {
 				} else {
 					if(Fn_sn_xn>Fetoile_n) {
 						Fetoile_n = Fn_sn_xn;
-						best_xn1 = xn;
+						best_xn1= xn;
 					}
 				}
 			}					
 		}
 		tab1.add(Fetoile_n);
 		System.out.println("le f*n du tab1 est : "+Fetoile_n);
-		System.out.println("le meilleur xn du tab 1 est : "+best_xn1); // Attention à ne pas oublier de le *5 pour avoir les m^3 réels
 }
 	
 	public double maxTab(ArrayList<Double> tab) {
@@ -394,8 +399,28 @@ public void calculTab1() {
 		
 	}
 	
+	public int searchMax(ArrayList<Double> tab, double debitrestant) {
+		double max = tab.get(0);
+		int indice_retour = 0;
+		for(int i = 0; i <= debitrestant; i++) {
+			//System.out.println(" i : "+i+" ; "+ tab.get(i));
+			if(tab.get(i)>max) {
+				max = tab.get(i);
+				indice_retour = i;
+			}
+		}
+		return indice_retour;
+	}
+	
 	public void backward () {
-		
+		System.out.println("le meilleur xn du tab 1 est : "+best_xn1*5);
+		double debit_restant = (this.QmaxTurb/5) - best_xn1;
+		System.out.println("Il reste : " + debit_restant * 5+" m^3 à turbiner");
+		System.out.println("...");
+		int indice_debit_restant = searchMax(tab2, debit_restant);
+		//System.out.println("Indice debit restant: " + indice_debit_restant);
+		// debit_restant = (this.QmaxTurb/5) - best_xn2.get(indice_debit_restant);
+		//System.out.println("Il reste : " + debit_restant * 5+" m^3 à turbiner");
 	}
 
 }

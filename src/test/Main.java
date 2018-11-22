@@ -25,5 +25,6 @@ public class Main {
 		a.displayTab2();
 		
 		a.calculTab1();
+		a.backward();
 	}
 }
