@@ -154,13 +154,14 @@ public class Algo {
 				if((sn - xn) >= 0) {
 					hcn = ElevAm - ElevAv-0.5*Math.pow(10, -5)*Math.pow(xn, 2);
 
-					// Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
+					// vieux code : Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
 
 					// Calcul du gain
-					Gn = p00 + p10*it + p01*hcn + p11*it*hcn + p02*Math.pow(hcn,2) + p12*it*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
+					Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
 					
-					System.out.println(" sn : "+sn);
-					System.out.println(" xn : "+xn);
+					//System.out.println(" sn : "+sn);
+					//System.out.println(" xn : "+xn);
+					
 					// Calcul de f* de n+1 (sn - xn)
 					Fetoile_np1 = tab5.get((sn/5) - (xn/5));
 					
