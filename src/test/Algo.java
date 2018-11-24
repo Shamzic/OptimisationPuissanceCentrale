@@ -41,7 +41,7 @@ public class Algo {
 	ArrayList<Integer> best_xn4;
 	ArrayList<Integer> best_xn3;
 	ArrayList<Integer> best_xn2;
-	double best_xn1 = 0;
+	int best_xn1 = 0;
 	
 	
 	//Constructor1
@@ -164,16 +164,20 @@ public class Algo {
 					
 					// Calcul de Fn(sn, xn)
 					Fn_sn_xn = Gn + Fetoile_np1; 
-					System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
+					 System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
 					
 					//calcul de Fn*(sn) : recherche du maximum des xn
 					if(xn == 0) {
 						Fetoile_n = Fn_sn_xn;
-						best_xn.add(xn);
+						best_xn.add(sn/5, 0);
+						
 					} else {
+						System.out.println("search bestxn : "+Fn_sn_xn+" >? "+ Fetoile_n);
 						if(Fn_sn_xn > Fetoile_n) {
+							
 							Fetoile_n = Fn_sn_xn;
 							best_xn.set(sn/5, xn); // (indice, élément)
+							//System.out.print("xn : "+xn+" ");
 						}
 					}
 				}					
@@ -216,7 +220,7 @@ public class Algo {
 		p12 =0.001016;
 		p03 =0.01517;
 		this.best_xn2.clear();
-		this.calculTab(tab2, tab3, best_xn3);
+		this.calculTab(tab2, tab3, best_xn2);
 	}
 	
 	public void displayTab4(){
@@ -269,7 +273,7 @@ public void calculTab1() {
 				
 				// Calcul de Fn(sn, xn)
 				Fn_sn_xn = Gn + Fetoile_np1; 
-				//System.out.println(" tab1 : fn => "+Fn_sn_xn);
+				System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
 				
 				//calcul de Fn*(sn) : recherche du maximum des xn
 				if(xn == 0) {
@@ -297,10 +301,10 @@ public void calculTab1() {
 		
 	}
 	
-	public int searchMax(ArrayList<Double> tab, double debitrestant) {
+	public int searchMax(ArrayList<Double> tab, int d, int limitQtot) {
 		double max = tab.get(0);
 		int indice_retour = 0;
-		for(int i = 0; i <= debitrestant; i++) {
+		for(int i = 0; i <= d && i <= limitQtot; i++) {
 			//System.out.println(" i : "+i+" ; "+ tab.get(i));
 			if(tab.get(i)>max) {
 				max = tab.get(i);
@@ -310,15 +314,48 @@ public void calculTab1() {
 		return indice_retour;
 	}
 	
-	public void backward () {
-		System.out.println("le meilleur xn du tab 1 est : "+best_xn1*5);
-		double debit_restant = (this.QmaxTurb/5) - best_xn1;
-		System.out.println("Il reste : " + debit_restant * 5+" m^3 à turbiner");
-		System.out.println("...");
-		int indice_debit_restant = searchMax(tab2, debit_restant);
-		//System.out.println("Indice debit restant: " + indice_debit_restant);
-		// debit_restant = (this.QmaxTurb/5) - best_xn2.get(indice_debit_restant);
-		//System.out.println("Il reste : " + debit_restant * 5+" m^3 à turbiner");
+	public void forward () {
+		
+		/* ****************** Turbine 1 ******************/
+		int debitOptimalT1 = best_xn1;
+		System.out.println("La turbine 1 va turbiner optimalement : " + debitOptimalT1*5 + " m^3");
+		
+		int debit_restantT1 = ((int)this.Qtot/5) - debitOptimalT1; // cast en int arrondi le qtot à un entier pour comparer avec les xn
+		System.out.println("Il reste : " + debit_restantT1 * 5 + " m^3 à turbiner (:");
+		
+		/* ****************** Turbine 2 ******************/
+		int indice_debit_restant2 = searchMax(tab2, debit_restantT1, 32); // limite 160 m^3 par turbine (32*5)
+		
+		System.out.println("La turbine 2 va turbiner optimalement : " + indice_debit_restant2*5 + " m^3");
+	
+		int debit_restantT2 = debit_restantT1 - indice_debit_restant2 ;
+		System.out.println("Il reste : " + debit_restantT2 * 5  + " m^3 à turbiner");
+		
+		/* ****************** Turbine 3 ******************/
+		int indice_debit_restant3 = searchMax(tab3, debit_restantT2, 32); // limite 160 m^3 par turbine (32*5)
+		
+		System.out.println("La turbine 3 va turbiner optimalement : " + indice_debit_restant3*5 + " m^3");
+	
+		int debit_restantT3 = debit_restantT2 - indice_debit_restant3 ;
+		System.out.println("Il reste : " + debit_restantT3 * 5  + " m^3 à turbiner");
+		
+		
+		/* ****************** Turbine 4 ******************/
+		int indice_debit_restant4 = searchMax(tab4, debit_restantT3, 32); // limite 160 m^3 par turbine (32*5)
+		
+		System.out.println("La turbine 4 va turbiner optimalement : " + indice_debit_restant4*5 + " m^3");
+	
+		int debit_restantT4 = debit_restantT3 - indice_debit_restant4 ;
+		System.out.println("Il reste : " + debit_restantT4 * 5  + " m^3 à turbiner");
+		
+		/* ****************** Turbine 5 ******************/
+		int indice_debit_restant5 = searchMax(tab5, debit_restantT4, 32); // limite 160 m^3 par turbine (32*5)
+		
+		System.out.println("La turbine 5 va turbiner optimalement : " + indice_debit_restant5*5 + " m^3");
+	
+		int debit_restantT5 = debit_restantT4 - indice_debit_restant5 ;
+		System.out.println("Il reste : " + debit_restantT5 * 5  + " m^3 à turbiner");
+		
 	}
 
 }
