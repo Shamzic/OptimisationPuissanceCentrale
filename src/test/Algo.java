@@ -7,6 +7,7 @@ public class Algo {
 	private int it;
 	//private int xn=0;
 	private int QmaxTurb=160;
+	private int debitRestant;
 	
 	private double p00;
 	private double p10;
@@ -28,6 +29,11 @@ public class Algo {
 	private double Qmax3;
 	private double Qmax4;
 	private double Qmax5;
+	
+	private double xn_etoile5;
+	private double xn_etoile4;
+	private double xn_etoile3;
+	private double xn_etoile2;
 	
 	// Tableau des débit max à turbiner pour chaque turbine
 	// Pour le tab5, on calcul directement la puissance max possible pour chaque débit
@@ -111,12 +117,15 @@ public class Algo {
 		p12 = 0.002065;
 		p03 = 0.01963;
 
+		// this.xn_etoile5 = 0 ;
+		
 		double Puissance = 0;
 		
 		for(int d = 0; d <= QmaxTurb; d += 5) {
 			
 			double pertes_de_charge = 0.5*Math.pow(10, -5)*Math.pow(d, 2);
 			double hcn = ElevAm - ElevAv - pertes_de_charge; 
+			//System.out.println("hdn : "+hcn);
 
 			
 			// f(x,y) = p00 + p10*x + p01*y + p11*x*y + p02*y^2 + p12*x*y^2 + p03*y^3
@@ -131,10 +140,25 @@ public class Algo {
 			
 			this.tab5.add(Puissance);
 		}
+
 	}
 	
 	public void displyTab5(){
-		System.out.println("Tab5 : "+this.tab5);
+		System.out.println("Tab5 = [ ");
+		
+		for(int i = 0 ; i < tab5.size(); i++) {
+			System.out.println("fn("+i*5+") = "+tab5.get(i));
+		}
+		System.out.println("] ");
+	}
+	
+   public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
 	}
 
 	public void calculTab(ArrayList<Double> tab, ArrayList<Double> tab_np1, ArrayList<Integer> best_xn){
@@ -145,9 +169,12 @@ public class Algo {
 		double Fn_sn_xn;
 		double Fetoile_n = 0;
 		
+		
 		// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 		// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
+		String stringbuffer = "";
 		for(int sn = 0; sn <= QmaxTurb; sn += 5) {
+			stringbuffer += "sn = "+sn+" [ ";
 			for(int xn = 0; xn <= QmaxTurb; xn += 5) {
 				if((sn - xn) >= 0) {
 					hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
@@ -161,30 +188,41 @@ public class Algo {
 					//System.out.println(" xn : "+xn);
 					
 					// Calcul de f* de n+1 (sn - xn)
+					// si qtot - xn* < 160 on prend elmt de 0 à qtot - xn*
+					// on fait ensuite le max du résultat précédent
+					// sinon on prend le max du tab n+1
 					Fetoile_np1 = tab_np1.get((sn/5) - (xn/5));
+					// System.out.println("Fetoile_np1 : "+Fetoile_np1);
 					
 					// Calcul de Fn(sn, xn)
 					Fn_sn_xn = Gn + Fetoile_np1; 
-					System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
+					//System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
 					
 					//calcul de Fn*(sn) : recherche du maximum des xn
 					if(xn == 0) {
-						Fetoile_n = Fn_sn_xn;
+						Fetoile_n = 0;
 						best_xn.add(sn/5, 0);	
 					}
-					System.out.println("search bestxn : "+Fn_sn_xn+" >? "+ Fetoile_n);
+					
 					if(Fn_sn_xn > Fetoile_n) {
+						//System.out.println("search bestxn : "+Fn_sn_xn+" >? "+ Fetoile_n);
 						Fetoile_n = Fn_sn_xn;
 						best_xn.set(sn/5, xn); // (indice, élément)
 						//System.out.print("xn : "+xn+" ");
 					}
-				
+					
+					// affichage : 
+					stringbuffer+=""+round(Fn_sn_xn, 2)+" ";
+		
 				}					
 			}
+			stringbuffer+="\n";
 			if(Fetoile_n<0)
 				Fetoile_n = 0;
 			tab.add(Fetoile_n);	
 		}
+
+		System.out.println("Tableau des fn(sn,xn) = \n"+stringbuffer);
 		System.out.println("Tableau des best_xn = "+best_xn);
 	}
 	
@@ -197,6 +235,7 @@ public class Algo {
 		this.p12 =0.0007168;
 		this.p03 =0.01525;
 		this.best_xn4.clear();
+		this.xn_etoile4 = Qtot;
 		this.calculTab(tab4, tab5, best_xn4);
 	}
 	
@@ -225,16 +264,16 @@ public class Algo {
 	}
 	
 	public void displayTab4(){
-		System.out.println("Tab4 : "+this.tab4);
+		System.out.println("Tab4 (fn*) : "+this.tab4);
 	}
 	
 	
 	public void displayTab3(){
-		System.out.println("Tab3 : "+this.tab3);
+		System.out.println("Tab3 (fn*) : "+this.tab3);
 	}
 	
 	public void displayTab2(){
-		System.out.println("Tab2 : "+this.tab2);
+		System.out.println("Tab2 (fn*) : "+this.tab2);
 	}
 	
 	
@@ -253,15 +292,14 @@ public void calculTab1() {
 	double Fetoile_np1;
 	double Fn_sn_xn;
 	double Fetoile_n = 0;
-	System.out.println("Tab 1 : ");
+	System.out.println("Tab 1 des fn(sn = 160, xn) = [");
+	String stringbuffer = "";
 	// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 	// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
 	int sn = QmaxTurb;
 		for(int xn = 0; xn <= QmaxTurb; xn += 5) {
 			if((sn - xn) >= 0) {
 				hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
-
-				// vieux code : Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
 
 				// Calcul du gain
 				Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
@@ -274,7 +312,8 @@ public void calculTab1() {
 				
 				// Calcul de Fn(sn, xn)
 				Fn_sn_xn = Gn + Fetoile_np1; 
-				System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
+				stringbuffer+=" "+Fn_sn_xn;
+				//System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
 				
 				//calcul de Fn*(sn) : recherche du maximum des xn
 				if(xn == 0) {
@@ -288,7 +327,7 @@ public void calculTab1() {
 			}					
 		}
 		tab1.add(Fetoile_n);
-		System.out.println("le f*n du tab1 est : "+Fetoile_n);
+		System.out.println("\nle f*n du tab1 est : "+Fetoile_n);
 }
 	
 	public double maxTab(ArrayList<Double> tab) {
