@@ -18,13 +18,13 @@ public class Main {
 		a.calculTab4();
 		a.displayTab4();
 		
-		a.calculTab3();
-		a.displayTab3();
-		
-		a.calculTab2();
-		a.displayTab2();
-		
-		a.calculTab1();
-		a.forward();
+//		a.calculTab3();
+//		a.displayTab3();
+//		
+//		a.calculTab2();
+//		a.displayTab2();
+//		
+//		a.calculTab1();
+//		a.forward();
 	}
 }

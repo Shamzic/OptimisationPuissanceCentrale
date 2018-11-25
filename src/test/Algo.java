@@ -55,7 +55,6 @@ public class Algo {
 		this.best_xn4 = new ArrayList<Integer>();
 		this.best_xn3 = new ArrayList<Integer>();
 		this.best_xn2 = new ArrayList<Integer>();
-	
 	}
 
 	// Constructor2
@@ -127,6 +126,8 @@ public class Algo {
 			Puissance = p00 + p10*d + p01*hcn + p11*d*hcn +
 					p02*Math.pow(hcn, 2) + p12*d*Math.pow(hcn, 2) + 
 					p03*Math.pow(hcn, 3);
+			if(Puissance<0)
+				Puissance = 0;
 			
 			this.tab5.add(Puissance);
 		}
@@ -164,24 +165,24 @@ public class Algo {
 					
 					// Calcul de Fn(sn, xn)
 					Fn_sn_xn = Gn + Fetoile_np1; 
-					 System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
+					System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
 					
 					//calcul de Fn*(sn) : recherche du maximum des xn
 					if(xn == 0) {
 						Fetoile_n = Fn_sn_xn;
-						best_xn.add(sn/5, 0);
-						
-					} else {
-						System.out.println("search bestxn : "+Fn_sn_xn+" >? "+ Fetoile_n);
-						if(Fn_sn_xn > Fetoile_n) {
-							
-							Fetoile_n = Fn_sn_xn;
-							best_xn.set(sn/5, xn); // (indice, élément)
-							//System.out.print("xn : "+xn+" ");
-						}
+						best_xn.add(sn/5, 0);	
 					}
+					System.out.println("search bestxn : "+Fn_sn_xn+" >? "+ Fetoile_n);
+					if(Fn_sn_xn > Fetoile_n) {
+						Fetoile_n = Fn_sn_xn;
+						best_xn.set(sn/5, xn); // (indice, élément)
+						//System.out.print("xn : "+xn+" ");
+					}
+				
 				}					
 			}
+			if(Fetoile_n<0)
+				Fetoile_n = 0;
 			tab.add(Fetoile_n);	
 		}
 		System.out.println("Tableau des best_xn = "+best_xn);
@@ -252,7 +253,7 @@ public void calculTab1() {
 	double Fetoile_np1;
 	double Fn_sn_xn;
 	double Fetoile_n = 0;
-	
+	System.out.println("Tab 1 : ");
 	// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 	// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
 	int sn = QmaxTurb;
