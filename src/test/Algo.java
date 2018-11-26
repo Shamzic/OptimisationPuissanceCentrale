@@ -276,7 +276,7 @@ public void calculTab1() {
 	double Fetoile_np1;
 	double Fn_sn_xn;
 	double Fetoile_n = 0;
-//	System.out.println("Tab 1 des fn(sn = 160, xn) = [");
+	System.out.println("Tab 1 des fn(sn = "+QmaxTurb+", xn) = [");
 	String stringbuffer = "";
 	// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 	// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
@@ -311,8 +311,8 @@ public void calculTab1() {
 			}					
 		}
 		tab1.add(Fetoile_n);
-		//System.out.println(""+stringbuffer+"\n]");
-		//System.out.println("\nle f*n du tab1 est : "+Fetoile_n);
+		System.out.println(""+stringbuffer+"\n]");
+		System.out.println("\nle f*n du tab1 est : "+Fetoile_n);
 }
 	
 	public double maxTab(ArrayList<Double> tab) {

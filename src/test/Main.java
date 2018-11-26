@@ -78,8 +78,6 @@ public class Main {
 		
 		//launcherAlgo(550, 172.110000610351, 160, 160, 160, 160, 160);
 		
-		launcherAlgo((int)530, 172.110, 160, 160, 160, 160, 160);
-		
 		// Boucle sur les 20 premiers résultats :
 		// C'est possible de mettre sur les 200 premiers
 		// mais un peu plus long à cause de l'affichage texte
