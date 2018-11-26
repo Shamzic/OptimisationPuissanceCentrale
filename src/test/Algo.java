@@ -3,12 +3,7 @@ package test;
 import java.util.ArrayList;
 
 public class Algo {
-	
-	private int it;
-	//private int xn=0;
-	private int QmaxTurb=160;
-	private int debitRestant;
-	
+		
 	private double p00;
 	private double p10;
 	private double p01;
@@ -19,6 +14,7 @@ public class Algo {
 	
 	private double ElevAm = 172.11;
 	private double ElevAv = 139.009;
+	private int QmaxTurb;
 	
 	// Débit total à turbiner
 	private double Qtot;
@@ -29,11 +25,6 @@ public class Algo {
 	private double Qmax3;
 	private double Qmax4;
 	private double Qmax5;
-	
-	private double xn_etoile5;
-	private double xn_etoile4;
-	private double xn_etoile3;
-	private double xn_etoile2;
 	
 	// Tableau des débit max à turbiner pour chaque turbine
 	// Pour le tab5, on calcul directement la puissance max possible pour chaque débit
@@ -74,6 +65,7 @@ public class Algo {
 		this.Qmax4 = Qmax4;
 		this.Qmax5 = Qmax5;
 		this.Qtot = Qtot;
+		this.QmaxTurb= (int)Qtot;
 		this.tab5 =new ArrayList<Double>();
 	}
 	
@@ -83,6 +75,7 @@ public class Algo {
 	
 	public void setQtot(double Qtot) {
 		this.Qtot = Qtot;
+		this.QmaxTurb= (int)Qtot;
 	}
 	
 	public void setDebitsMax(double Qmax1, double Qmax2, 
@@ -107,7 +100,7 @@ public class Algo {
 		return this.ElevAv;
 	}
 	
-	public void calculTab5() { // OK
+	public void calculTab5() {
 		
 		p00 = -665.4;
 		p10 = 1.773;
@@ -116,29 +109,33 @@ public class Algo {
 		p02 = -1.924;
 		p12 = 0.002065;
 		p03 = 0.01963;
-
-		// this.xn_etoile5 = 0 ;
 		
-		double Puissance = 0;
+		double puissance = 0;
+		double puissanceMax = 0;
 		
 		for(int d = 0; d <= QmaxTurb; d += 5) {
 			
 			double pertes_de_charge = 0.5*Math.pow(10, -5)*Math.pow(d, 2);
 			double hcn = ElevAm - ElevAv - pertes_de_charge; 
-			//System.out.println("hdn : "+hcn);
-
 			
 			// f(x,y) = p00 + p10*x + p01*y + p11*x*y + p02*y^2 + p12*x*y^2 + p03*y^3
 			//  - en x on a le débit : d
 			//  - en y on a la hauteur de chute nette : hcn
+			if(d<=QmaxTurb) {
+				puissance = p00 + p10*d + p01*hcn + p11*d*hcn +
+						p02*Math.pow(hcn, 2) + p12*d*Math.pow(hcn, 2) + 
+						p03*Math.pow(hcn, 3);
+				if(puissance>puissanceMax)
+					puissanceMax = puissance;
+			}
 			
-			Puissance = p00 + p10*d + p01*hcn + p11*d*hcn +
-					p02*Math.pow(hcn, 2) + p12*d*Math.pow(hcn, 2) + 
-					p03*Math.pow(hcn, 3);
-			if(Puissance<0)
-				Puissance = 0;
-			
-			this.tab5.add(Puissance);
+			if(d <= QmaxTurb) {
+			if(puissance<0)
+				puissance = 0;
+			this.tab5.add(puissance);
+			}
+			else
+			 this.tab5.add(puissanceMax);
 		}
 
 	}
@@ -169,7 +166,6 @@ public class Algo {
 		double Fn_sn_xn;
 		double Fetoile_n = 0;
 		
-		
 		// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 		// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
 		String stringbuffer = "";
@@ -179,24 +175,13 @@ public class Algo {
 				if((sn - xn) >= 0) {
 					hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
 
-					// vieux code : Puissancecalcule= p00 + p10*it + p01*HauteurChuteNette4 + p11*it*HauteurChuteNette4 + p02*Math.pow(HauteurChuteNette4,2) + p12*it*Math.pow(HauteurChuteNette4,2) + p03*Math.pow(HauteurChuteNette4,3)+this.tab5.get(j-it);
-
 					// Calcul du gain
 					Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
 					
-					//System.out.println(" sn : "+sn);
-					//System.out.println(" xn : "+xn);
-					
-					// Calcul de f* de n+1 (sn - xn)
-					// si qtot - xn* < 160 on prend elmt de 0 à qtot - xn*
-					// on fait ensuite le max du résultat précédent
-					// sinon on prend le max du tab n+1
 					Fetoile_np1 = tab_np1.get((sn/5) - (xn/5));
-					// System.out.println("Fetoile_np1 : "+Fetoile_np1);
 					
 					// Calcul de Fn(sn, xn)
-					Fn_sn_xn = Gn + Fetoile_np1; 
-					//System.out.println("Gain : "+ Gn+", Fn(sn="+sn+",xn="+xn+") = "+Fn_sn_xn);
+					Fn_sn_xn = Gn + Fetoile_np1;
 					
 					//calcul de Fn*(sn) : recherche du maximum des xn
 					if(xn == 0) {
@@ -222,8 +207,8 @@ public class Algo {
 			tab.add(Fetoile_n);	
 		}
 
-		System.out.println("Tableau des fn(sn,xn) = \n"+stringbuffer);
-		System.out.println("Tableau des best_xn = "+best_xn);
+		//System.out.println("Tableau des fn(sn,xn) = \n"+stringbuffer);
+		//System.out.println("Tableau des best_xn = "+best_xn);
 	}
 	
 	public void calculTab4() {
@@ -235,7 +220,6 @@ public class Algo {
 		this.p12 =0.0007168;
 		this.p03 =0.01525;
 		this.best_xn4.clear();
-		this.xn_etoile4 = Qtot;
 		this.calculTab(tab4, tab5, best_xn4);
 	}
 	
@@ -292,7 +276,7 @@ public void calculTab1() {
 	double Fetoile_np1;
 	double Fn_sn_xn;
 	double Fetoile_n = 0;
-	System.out.println("Tab 1 des fn(sn = 160, xn) = [");
+//	System.out.println("Tab 1 des fn(sn = 160, xn) = [");
 	String stringbuffer = "";
 	// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 	// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
@@ -327,7 +311,8 @@ public void calculTab1() {
 			}					
 		}
 		tab1.add(Fetoile_n);
-		System.out.println("\nle f*n du tab1 est : "+Fetoile_n);
+		//System.out.println(""+stringbuffer+"\n]");
+		//System.out.println("\nle f*n du tab1 est : "+Fetoile_n);
 }
 	
 	public double maxTab(ArrayList<Double> tab) {
@@ -364,7 +349,8 @@ public void calculTab1() {
 		System.out.println("Il reste : " + debit_restantT1 * 5 + " m^3 à turbiner (:");
 		
 		/* ****************** Turbine 2 ******************/
-		int indice_debit_restant2 = searchMax(tab2, debit_restantT1, 32); // limite 160 m^3 par turbine (32*5)
+		System.out.println("Qmax2 : "+Qmax2);
+		int indice_debit_restant2 = searchMax(tab2, debit_restantT1, (int)Qmax2/5); // limite 160 m^3 par turbine (32*5)
 		
 		System.out.println("La turbine 2 va turbiner optimalement : " + indice_debit_restant2*5 + " m^3");
 	
@@ -372,7 +358,7 @@ public void calculTab1() {
 		System.out.println("Il reste : " + debit_restantT2 * 5  + " m^3 à turbiner");
 		
 		/* ****************** Turbine 3 ******************/
-		int indice_debit_restant3 = searchMax(tab3, debit_restantT2, 32); // limite 160 m^3 par turbine (32*5)
+		int indice_debit_restant3 = searchMax(tab3, debit_restantT2, (int)Qmax3/5); // limite 160 m^3 par turbine (32*5)
 		
 		System.out.println("La turbine 3 va turbiner optimalement : " + indice_debit_restant3*5 + " m^3");
 	
@@ -381,7 +367,7 @@ public void calculTab1() {
 		
 		
 		/* ****************** Turbine 4 ******************/
-		int indice_debit_restant4 = searchMax(tab4, debit_restantT3, 32); // limite 160 m^3 par turbine (32*5)
+		int indice_debit_restant4 = searchMax(tab4, debit_restantT3, (int)Qmax4/5); // limite 160 m^3 par turbine (32*5)
 		
 		System.out.println("La turbine 4 va turbiner optimalement : " + indice_debit_restant4*5 + " m^3");
 	
@@ -389,7 +375,7 @@ public void calculTab1() {
 		System.out.println("Il reste : " + debit_restantT4 * 5  + " m^3 à turbiner");
 		
 		/* ****************** Turbine 5 ******************/
-		int indice_debit_restant5 = searchMax(tab5, debit_restantT4, 32); // limite 160 m^3 par turbine (32*5)
+		int indice_debit_restant5 = searchMax(tab5, debit_restantT4, (int)Qmax5/5); // limite 160 m^3 par turbine (32*5)
 		
 		System.out.println("La turbine 5 va turbiner optimalement : " + indice_debit_restant5*5 + " m^3");
 	
