@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Algo {
 		
+
+	static int STOP = 160;
 	private double p00;
 	private double p10;
 	private double p01;
@@ -39,6 +41,11 @@ public class Algo {
 	ArrayList<Integer> best_xn3;
 	ArrayList<Integer> best_xn2;
 	int best_xn1 = 0;
+	
+	 static double[] coeffP1 = {  0.08651, -0.0025430, -0.1976, 0.008183, 0.002892, 7.371 * 0.000001, -1.191 * 0.00001 };
+	 static double[] coeffP2 = {  0.81220, -0.0237400, -0.2442, 0.006492, 0.003838, 2.207 * 0.000010, -1.665 * 0.00001 };
+	 static double[] coeffP3 = { -0.02446,  0.0009464, -0.2157, 0.006353, 0.003541, 2.214 * 0.000010, -1.569 * 0.00001 };
+	 static double[] coeffP4 = { -0.04632,  0.0017690, -0.1905, 0.004951, 0.003537, 3.487 * 0.000010, -1.689 * 0.00001 };
 	
 	
 	//Constructor1
@@ -102,14 +109,13 @@ public class Algo {
 	
 	public void calculTab5() {
 		
-		p00 = -665.4;
-		p10 = 1.773;
-		p01 = 62.27;
-		p11 = -0.113;
-		p02 = -1.924;
-		p12 = 0.002065;
-		p03 = 0.01963;
-		
+		p00 = 31.62;
+		p10 = 14.61;
+		p01 = 2.614;
+		p11 = 1.631;
+		p02 = 0.4912;
+		p12 = 0.2792;
+		p03 = 0.07843;
 		double puissance = 0;
 		double puissanceMax = 0;
 		
@@ -119,12 +125,19 @@ public class Algo {
 			double hcn = ElevAm - ElevAv - pertes_de_charge; 
 			
 			// f(x,y) = p00 + p10*x + p01*y + p11*x*y + p02*y^2 + p12*x*y^2 + p03*y^3
+			// f(x,y) = p00 + p10*x + p01*y + p11*x*y + p02*y^2 + p12*x*y^2 + p03*y^3
 			//  - en x on a le débit : d
 			//  - en y on a la hauteur de chute nette : hcn
 			if(d<=QmaxTurb) {
-				puissance = p00 + p10*d + p01*hcn + p11*d*hcn +
-						p02*Math.pow(hcn, 2) + p12*d*Math.pow(hcn, 2) + 
-						p03*Math.pow(hcn, 3);
+				//   f(x,y) = p00 + p10*x + p01*y + p11*x*y + p02*y^2 + p12*x*y^2 + p03*y^3
+//				puissance = p00 + p10*d + p01*hcn + p11*d*hcn +
+//						p02*Math.pow(hcn, 2) + p12*d*Math.pow(hcn, 2) + 
+//						p03*Math.pow(hcn, 3);
+			 double[] coeffP5 = {  0.29460, -0.0080740, -0.1834, 0.008090, 0.002706, 1.949 * 0.000010, -1.318 * 0.00001 };
+			// f(x,y) = p00 + p10*x + p01*y + p20*x^2 + p11*x*y + p02*y^2 + p30*x^3 + p21*x^2*y 
+	          //          + p12*x*y^2
+				puissance = coeffP5[0] + (coeffP5[1] * hcn) + (coeffP5[2] * d) + (coeffP5[3] * hcn * d)
+						+ (coeffP5[4] * d * d) + (coeffP5[5] * d * d * hcn) + (coeffP5[6] * d * d * d);
 				if(puissance>puissanceMax)
 					puissanceMax = puissance;
 			}
@@ -158,7 +171,7 @@ public class Algo {
 	    return (double) tmp / factor;
 	}
 
-	public void calculTab(ArrayList<Double> tab, ArrayList<Double> tab_np1, ArrayList<Integer> best_xn){
+	public void calculTab(ArrayList<Double> tab, ArrayList<Double> tab_np1, ArrayList<Integer> best_xn, double[] coeffP){
 		
 		double hcn;
 		double Gn;
@@ -171,12 +184,16 @@ public class Algo {
 		String stringbuffer = "";
 		for(int sn = 0; sn <= QmaxTurb; sn += 5) {
 			stringbuffer += "sn = "+sn+" [ ";
-			for(int xn = 0; xn <= QmaxTurb; xn += 5) {
+			for(int xn = 0; xn <= STOP; xn += 5) {
 				if((sn - xn) >= 0) {
 					hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
 
 					// Calcul du gain
-					Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
+					//Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
+					
+					Gn = coeffP[0] + (coeffP[1] * hcn) + (coeffP[2] * xn) + (coeffP[3] * hcn * xn)
+							+ (coeffP[4] * xn * xn) + (coeffP[5] * xn * xn * hcn) + (coeffP[6] * xn * xn * xn);
+					
 					
 					Fetoile_np1 = tab_np1.get((sn/5) - (xn/5));
 					
@@ -208,43 +225,43 @@ public class Algo {
 		}
 
 		//System.out.println("Tableau des fn(sn,xn) = \n"+stringbuffer);
-		//System.out.println("Tableau des best_xn = "+best_xn);
+		System.out.println("Tableau des best_xn = "+best_xn);
 	}
 	
 	public void calculTab4() {
-		this.p00 =-436.5;
-		this.p10 =0.6018;
-		this.p01 =43.03;
-		this.p11 =-0.03336;
-		this.p02 =-1.406;
-		this.p12 =0.0007168;
-		this.p03 =0.01525;
+		p00 = 34.5;
+		p10 = 15.42;
+		p01 = 2.376;
+		p11 = 1.246;
+		p02 = 0.3717;
+		p12 = 0.1407;
+		p03 = 0.06054;
 		this.best_xn4.clear();
-		this.calculTab(tab4, tab5, best_xn4);
+		this.calculTab(tab4, tab5, best_xn4, coeffP4);
 	}
 	
 	public void calculTab3() {
-		this.p00 =-713.9;
-		this.p10 =1.331;
-		this.p01 =67.91;
-		this.p11 =-0.08218;
-		this.p02 =-2.137;
-		this.p12 =0.001528;
-		this.p03 =0.02226;
+		p00 = 33.35;
+		p10 = 13.57;
+		p01 = 2.314;
+		p11 = 1.262;
+		p02 = 0.4717;
+		p12 = 0.1962;
+		p03 = 0.08876;
 		this.best_xn3.clear();
-		this.calculTab(tab3, tab4, best_xn3);
+		this.calculTab(tab3, tab4, best_xn3, coeffP3);
 	}
 	
 	public void calculTab2() {
-		p00 =-463.8;
-		p10 =0.8633;
-		p01 =44.78;
-		p11 =-0.05074;
-		p02 =-1.432;
-		p12 =0.001016;
-		p03 =0.01517;
+		p00 = 30.88;
+		p10 = 15.35;
+		p01 = 2.077;
+		p11 = 1.135;
+		p02 = 0.3508;
+		p12 = 0.1033;
+		p03 = 0.06088;
 		this.best_xn2.clear();
-		this.calculTab(tab2, tab3, best_xn2);
+		this.calculTab(tab2, tab3, best_xn2, coeffP2);
 	}
 	
 	public void displayTab4(){
@@ -263,13 +280,13 @@ public class Algo {
 	
 public void calculTab1() {
 		
-	this.p00 =-688.9;
-	this.p10 =0.8937;
-	this.p01 =67.96;
-	this.p11 =-0.05336;
-	this.p02 =-2.223;
-	this.p12 =0.001051;
-	this.p03 =0.02414;
+    p00 =       31.21 ;
+    p10 =       14.43  ;
+    p01 =        2.33  ;
+    p11 =       1.211;
+    p02 =      0.5485  ;
+    p12 =      0.1455 ;
+    p03 =      0.0964;
 
 	double hcn;
 	double Gn;
@@ -281,13 +298,14 @@ public void calculTab1() {
 	// S(n) :  variables d'état -> volume d'eau restant à turbiner pour la turbine n (avec 0 <= n <= 160).
 	// x(n) : variables de décision -> volume d'eau à turbiner alloué à la turbine n (avec 0 <= n <= 160).
 	int sn = QmaxTurb;
-		for(int xn = 0; xn <= QmaxTurb; xn += 5) {
+		for(int xn = 0; xn <= STOP; xn += 5) {
 			if((sn - xn) >= 0) {
 				hcn = ElevAm - ElevAv - 0.5*Math.pow(10, -5)*Math.pow(xn, 2);
 
 				// Calcul du gain
-				Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
-				
+				// Gn = p00 + p10*xn + p01*hcn + p11*xn*hcn + p02*Math.pow(hcn,2) + p12*xn*Math.pow(hcn,2) + p03*Math.pow(hcn,3);
+				Gn = coeffP1[0] + (coeffP1[1] * hcn) + (coeffP1[2] * xn) + (coeffP1[3] * hcn * xn)
+						+ (coeffP1[4] * xn * xn) + (coeffP1[5] * xn * xn * hcn) + (coeffP1[6] * xn * xn * xn);
 				//System.out.println(" sn : "+sn);
 				//System.out.println(" xn : "+xn);
 				

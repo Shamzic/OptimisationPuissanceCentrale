@@ -57,16 +57,16 @@ public class Main {
 		a.calculElevAv();
 		
 		a.calculTab5();
-		//a.displyTab5();
+		a.displyTab5();
 		
 		a.calculTab4();
-		//a.displayTab4();
+		a.displayTab4();
 		
 		a.calculTab3();
-		//a.displayTab3();
+		a.displayTab3();
 		
 		a.calculTab2();
-		//a.displayTab2();
+		a.displayTab2();
 		
 		a.calculTab1();
 		a.forward();
@@ -81,8 +81,8 @@ public class Main {
 		// Boucle sur les 20 premiers résultats :
 		// C'est possible de mettre sur les 200 premiers
 		// mais un peu plus long à cause de l'affichage texte
-		for(int i = 0 ; i<=20; i++) {
-			launcherAlgo((int)tabQtot[i], tabElevationsAvales[i], 160, 160, 160, 160, 160); 
+		for(int i = 0 ; i<=0; i++) {
+			launcherAlgo((int)550, tabElevationsAvales[i], 160, 160, 160, 160, 160); 
 		}
 	}
 }
