@@ -36,12 +36,12 @@ public class Algo {
 	ArrayList<Double> fEtoile1=new ArrayList<Double>();
 	ArrayList<Integer> XnEtoile0=new ArrayList<Integer>();
 	
-	public Algo(int Qtot, double elevAval) {
+	public Algo(int Qtot, double elevAmont) {
 		this.Qtot = Qtot;
-		this.elevAval = elevAval;
+		this.elevAm = elevAmont;
 	}
 	
-//calcul des gains de toutes les turbines
+	//calcul des gains de toutes les turbines
 	public double calculGainTurb(int numTurb, int Xn, double hcn) {
 		if (Xn==0) return 0;
 		else{
@@ -64,8 +64,7 @@ public class Algo {
 		return puissance;
 	}
 
-//calcul de l'elevation avale en fonction du debit total
-	
+	//calcul de l'elevation avale en fonction du debit total
 	public double calculElevAv() {
 		double p1 = -7.378 * Math.pow(10, -7);
 		double p2 = 0.004195;
@@ -194,44 +193,52 @@ public class Algo {
 		
 		debitRestant=(int) (Qtot-maxIndex);
 		puissanceMax=maximum;
-		System.out.println("debit turbiné: "+maxIndex);
-		System.out.println("Puissance generée de turb 1 à turb 5 :"+puissanceMax);
-		System.out.println("debit restant: "+debitRestant);
 
+		System.out.println(" --- Turbine 1 --- " );
 		int index = debitRestant  > 0 ? debitRestant  : 0;
+		System.out.println("Debit turbiné par la turbine 1 : "+maxIndex);
+		System.out.println("Puissance générée par la turbine 1 :"+((puissanceMax-fEtoile2.get(index/5)) >0 ? (puissanceMax-fEtoile2.get(index/5)) : 0));
+
+		System.out.println("Puissance générée de turb 1 à turb 5 :"+puissanceMax);
+		System.out.println("débit restant : "+debitRestant);
 		
+
+		System.out.println(" --- Turbine 2 --- " );
+		System.out.println("Débit turbiné par la turbine 2 :  "+XnEtoile2.get(index/5));
+		System.out.println("Puissance générée par la turbine 2 :"+fEtoile2.get(XnEtoile2.get(index/5)/5));
 		debitRestant=(int) (debitRestant-XnEtoile2.get(index/5));
-		System.out.println("debit turbiné: "+XnEtoile2.get(index/5));
-
-		System.out.println("Puissance generée de turb 2 à turb 5 :"+fEtoile2.get(index/5));
+		System.out.println("Puissance générée de turb 2 à turb 5 :"+fEtoile2.get(index/5));
 		System.out.println("debit restant: "+debitRestant);
 
 		index = debitRestant  > 0 ? debitRestant  : 0;
-		
+		System.out.println(" --- Turbine 3 --- " );
+		System.out.println("Débit turbiné par la turbine 3 : "+XnEtoile3.get(index/5));
+		System.out.println("Puissance générée par la turbine 3 :"+fEtoile3.get(XnEtoile3.get(index/5)/5));
 		debitRestant=(int) (debitRestant-XnEtoile3.get(index/5));
-		System.out.println("debit turbiné: "+XnEtoile3.get(index/5));
-
-		System.out.println("Puissance generée de turb 3 à turb 5 :"+fEtoile3.get(index/5));
+		System.out.println("Puissance générée de turb 3 à turb 5 :"+fEtoile3.get(index/5));
 		System.out.println("debit restant: "+debitRestant);
 
 		index = debitRestant  > 0 ? debitRestant  : 0;
-		
+		System.out.println(" --- Turbine 4 --- " );
+		System.out.println("Débit turbiné par la turbine 4 :"+XnEtoile4.get(index/5));
+		System.out.println("Puissance générée par la turbine 4 :"+fEtoile4.get(XnEtoile4.get(index/5)/5));
 		debitRestant=(int) (debitRestant-XnEtoile4.get(index/5));
-		System.out.println("debit turbiné: "+XnEtoile4.get(index/5));
-
-		System.out.println("Puissance generée de turb 4 à turb 5 :"+fEtoile4.get(index/5));
+		
+		
+		System.out.println("Puissance générée de turb 4 à turb 5 :"+fEtoile4.get(index/5));
 		System.out.println("debit restant: "+debitRestant);
 
 		index = debitRestant  > 0 ? debitRestant  : 0;
-		
+		System.out.println(" --- Turbine 5 --- " );
+		System.out.println("Débit turbiné par la turbine 5 : "+XnEtoile.get(index/5));
+		System.out.println("Puissance générée par turbine 5 :"+fEtoile.get(index/5));
 		debitRestant=(int) (debitRestant-XnEtoile.get(index/5));
-		System.out.println("debit turbiné: "+XnEtoile.get(index/5));
 
 		
-		System.out.println("Puissance generée par turb 5 :"+fEtoile.get(index/5));
-		System.out.println("debit restant: "+debitRestant);
-		index = debitRestant  > 0 ? debitRestant  : 0;
 		
+
+		System.out.println("debit restant: "+debitRestant);
+		index = debitRestant  > 5 ? debitRestant  : 0;
 		
 	}
 }

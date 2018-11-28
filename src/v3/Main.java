@@ -27,7 +27,7 @@ public class Main {
 			572.389,573.917,576.171,572.993,572.427,571.013,572.712,573.785,573.729,572.239,
 			575.979,574.407};
 	
-	static double[] tabElevationsAvales = {172.110,172.110,172.110,172.110,172.120,172.120,
+	static double[] tabElevationsAmont = {172.110,172.110,172.110,172.110,172.120,172.120,
 			172.110,172.120,172.120,172.120,172.120,172.120,172.120,172.120,172.120,172.130,
 			172.130,172.130,172.120,172.130,172.130,172.130,172.130,172.130,172.130,172.130,
 			172.130,172.130,172.140,172.131,172.130,172.130,172.130,172.130,172.130,172.130,
@@ -61,13 +61,11 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-	//	System.out.println(" Qtot = "+tabQtot[6]+", Elevation Alav = "+tabElevationsAvales[6]);
-	//	launcherAlgo((int)tabQtot[6],tabElevationsAvales[6]);
 
 		for(int i = 0 ; i< 200; i++) {
 			System.out.println(" ----------------- Jour "+(i+1)+" ----------------- ");
-			System.out.println(" Qtot = "+tabQtot[i]+", Elevation Alav = "+tabElevationsAvales[i]);
-			launcherAlgo((int)tabQtot[i],tabElevationsAvales[i]);
+			System.out.println(" Qtot = "+(int)tabQtot[i]+", Elevation Alav = "+tabElevationsAmont[i]);
+			launcherAlgo((int)tabQtot[i],tabElevationsAmont[i]);
 			System.out.println(" ---------------------------------------------- ");
 		}
 		
